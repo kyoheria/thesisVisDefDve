@@ -17,7 +17,8 @@ let colorPalet;
 var DefB=[];
 
 function preload() {
-  table = loadTable('https://docs.google.com/spreadsheets/d/e/2PACX-1vSpQmll0IN35vyqKtiB31pqcYN2d5a8JBtJi1qw4DnclPhxjefbq9J89rG6C_t1knCMYoo9qrPhcp3S/pub?output=csv', 'csv', 'header');
+  table = loadTable('FormResponses.csv', 'csv', 'header');
+  //table = loadTable('https://docs.google.com/spreadsheets/d/e/2PACX-1vSpQmll0IN35vyqKtiB31pqcYN2d5a8JBtJi1qw4DnclPhxjefbq9J89rG6C_t1knCMYoo9qrPhcp3S/pub?output=csv', 'csv', 'header');
 }
 
 function setup() {
