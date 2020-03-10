@@ -14,11 +14,16 @@ let transDefs = [];
 
 let colorPalet;
 
+let count=0;
+let c =0;
+
+
 var DefB=[];
 
 function preload() {
-  table = loadTable('FormResponses.csv', 'csv', 'header');
   //table = loadTable('https://docs.google.com/spreadsheets/d/e/2PACX-1vSpQmll0IN35vyqKtiB31pqcYN2d5a8JBtJi1qw4DnclPhxjefbq9J89rG6C_t1knCMYoo9qrPhcp3S/pub?output=csv', 'csv', 'header');
+  table = loadTable('FormResponses.csv', 'csv', 'header');
+  console.log("data loaded");
 }
 
 function setup() {
@@ -26,6 +31,7 @@ function setup() {
   canX=windowWidth;
   createCanvas(canX, canY);
   background(color('#2D334A'));
+  
   print(table.getRowCount() + ' total rows in table');
   print(table.getColumnCount() + ' total columns in table');
   red = color('#E6AB9E');
@@ -35,10 +41,11 @@ function setup() {
   blue = color('#9EE6E6');
   purple = color('#9AAEFC');
   pink = color('#E6A1C3');
-  colorPalet = [red,orange,yellow,green,blue,purple,pink];
-
+  colorPalet = [red,orange,yellow,green,blue,purple,pink,color(230, 171, 158,100),color(230, 192, 158,100),color(240, 242, 167,100),color(167, 242, 193,100),color(158, 230, 230,100),color(154, 174, 252,100),color(230, 161, 195,100)];
+  
   //cycle through the table
   for (let r = 0; r < table.getRowCount(); r++){
+    console.log(table.getString(r,2));
     
     var nick, nat,eth,a,car,gen,se,des,ide,iced,cha,wi,mov,ha,st1,st2,connection,anonymous;
     var genVal=[];
@@ -60,8 +67,8 @@ function setup() {
     for(var i = 0; i<14; i+=2){
       genVal.push(int(table.getString(r,16+i)));
     } 
-
     //each gender's def words
+    
     maleDefs.push(table.getString(r,17).toUpperCase().trim());
     femaleDefs.push(table.getString(r,19).toUpperCase().trim());
     genfluDefs.push(table.getString(r,21).toUpperCase().trim());
@@ -69,7 +76,8 @@ function setup() {
     nongenDefs.push(table.getString(r,25).toUpperCase().trim());
     gqueerDefs.push(table.getString(r,27).toUpperCase().trim());
     transDefs.push(table.getString(r,29).toUpperCase().trim());
-
+    
+    //console.log(maleDefs.length);
     //making an array of all def for gender together (upper case, no space, no duplicate)
     for(var i = 0; i<14; i+=2){
       //making it upper and no space
@@ -140,22 +148,21 @@ function setup() {
 
     //console.log("name is" + table.getString(r,2));
     people.push(new Person(nick, nat,eth,a,car,gen,se,des,ide,iced,cha,wi,mov,ha,genVal,seVal,st1,st2,connection,anonymous,ranx,rany));
-    //console.log("position"+people[r].x+" "+people[r].y);
+    console.log("pushing people");
   }
-
+  /*
   //checking collusion
   for(var i =1 ; i<people.length; i++){
     for(var j = i+1; j<people.length; j++){
       var dis = dist(people[i].x,people[i].y,people[j].x,people[j].y);
-      //
+
       if(dis < 200){
         var ranx = people[i].x + random(50, 100);
         var rany = people[i].y + random(50, 100);
-
-          if(dis<=200){
+        if(dis<=200){
             ranx = people[i].x+random(50, 100);
             rany = people[i].y+random(50, 100);
-          }
+        }
         
         if(ranx+100>canX){
           ranx= canX-150;
@@ -169,18 +176,9 @@ function setup() {
         j = i+1;
       }
     }
-  }
+  }*/
   
-  console.log(genDefs);
-
-  console.log(maleDefs);
-  console.log(femaleDefs);
-  console.log(genfluDefs);
-  console.log(agenDefs);
-  console.log(nongenDefs);
-  console.log(gqueerDefs);
-  console.log(transDefs);
-  
+  //console.log(maleDefs.length);
   for(var i = 0; i<genDefs.length; i++){
     var arr;
     var z = genDefs[i];
@@ -217,17 +215,33 @@ function setup() {
     arr=[m,f,g,a,n,q,t];
     DefB.push(arr);
   }
-  console.log("def binary is" +DefB.length);
+  //console.log("def binary is" +DefB.length);
+  
 }
 
 function draw(){
   background(color('#2D334A'));
   //darwConnection();
   darwdef();
+  /*
+  if(int(millis()*100)%genDefs.length==0){
+    c++
+    if(c==genDefs.length){
+      c=0;
+    }
+  }
+  */
+  if(int(millis()*100)%7==0){
+    c++
+  if(c==7){
+    c=0;
+  }
+}
 }
 
 function darwdef(){
   //decideing on position
+  //console.log("angle is "+ang);
   var pos = [];
   var posW=[];
   var mdefPos=[];
@@ -238,12 +252,13 @@ function darwdef(){
   var qdefPos=[];
   var tdefPos=[];
   var ang = 2*PI/genDefs.length;
-  console.log("angle is "+ang);
-  textSize(10);
-  textAlign(RIGHT);
+  
+  //console.log("angle is "+ang);
+  textSize(8);
+  textAlign(LEFT);
   //creating array of vector in circle
   push();
-  translate(canX/2,canY/2);
+  translate(canX/4,canY/2);
   for(i=0;i<genDefs.length;i++){
     pos.push(createVector(cos(ang*i)*300, sin(ang*i)*300));
     posW.push(createVector(cos(ang*i)*330, sin(ang*i)*330));
@@ -282,63 +297,158 @@ function darwdef(){
   }
   //console.log(mdefPos.length);
   noFill();
-
-  stroke(colorPalet[0]);
+  if(c==0){
+    stroke(colorPalet[0]);
+  }else{
+    stroke(colorPalet[7]);
+  }
   for(var i=0;i<mdefPos.length;i++){
     for(var j=i;j<mdefPos.length;j++){
       line(mdefPos[i].x, mdefPos[i].y,mdefPos[j].x, mdefPos[j].y);
     }
   }
 
-  stroke(colorPalet[1]);
+  if(c==1){
+    stroke(colorPalet[1]);
+  }else{
+    stroke(colorPalet[8]);
+  }
   for(var i=0;i<fdefPos.length;i++){
     for(var j=i;j<fdefPos.length;j++){
       line(fdefPos[i].x, fdefPos[i].y,fdefPos[j].x, fdefPos[j].y);
     }
   }
 
-  stroke(colorPalet[2]);
+  if(c==2){
+    stroke(colorPalet[2]);
+  }else{
+    stroke(colorPalet[9]);
+  }
   for(var i=0;i<gdefPos.length;i++){
     for(var j=i;j<gdefPos.length;j++){
       line(gdefPos[i].x, gdefPos[i].y,gdefPos[j].x, gdefPos[j].y);
     }
   }
 
-  stroke(colorPalet[3]);
+  if(c==3){
+    stroke(colorPalet[3]);
+  }else{
+    stroke(colorPalet[10]);
+  }
   for(var i=0;i<adefPos.length;i++){
     for(var j=i;j<adefPos.length;j++){
       line(adefPos[i].x, adefPos[i].y,adefPos[j].x, adefPos[j].y);
     }
   }
 
-  stroke(colorPalet[4]);
+  if(c==4){
+    stroke(colorPalet[4]);
+  }else{
+    stroke(colorPalet[11]);
+  }
   for(var i=0;i<ndefPos.length;i++){
     for(var j=i;j<ndefPos.length;j++){
       line(ndefPos[i].x, ndefPos[i].y,ndefPos[j].x, ndefPos[j].y);
     }
   }
 
-  stroke(colorPalet[5]);
+  if(c==5){
+    stroke(colorPalet[5]);
+  }else{
+    stroke(colorPalet[12]);
+  }
   for(var i=0;i<qdefPos.length;i++){
     for(var j=i;j<qdefPos.length;j++){
       line(qdefPos[i].x, qdefPos[i].y,qdefPos[j].x, qdefPos[j].y);
     }
   }
-  stroke(colorPalet[6]);
+
+  if(c==6){
+    stroke(colorPalet[6]);
+  }else{
+    stroke(colorPalet[13]);
+  }
   for(var i=0;i<tdefPos.length;i++){
     for(var j=i;j<tdefPos.length;j++){
       line(tdefPos[i].x, tdefPos[i].y,tdefPos[j].x, tdefPos[j].y);
     }
   }
 
+  if(ang*i>PI/4&&ang*i<PI*3/4){
+    textAlign(CENTER,BOTTOM);
+  }else if(ang*i>PI*3/4&&ang*i<PI*5/4){
+    textAlign(RIGHT,CENTER);
+  }else if(ang*i>PI*5/4&&ang*i<PI*7/4){
+    textAlign(CENTER,TOP);
+  }else{
+    textAlign(LEFT,CENTER);
+  }
+
 
   //displaying text at that position
   noStroke();
-  fill(255);
+  fill(255,50);
+  //console.log("running for "+c);
   for(i=0;i<posW.length;i++){
-    rotate(ang);
+    var px = pos[i].x;
+    var py = pos[i].y;
+    fill(255,50);
     text(genDefs[i], posW[i].x,posW[i].y);
+    if(c==0){
+      for(var j=0;j<mdefPos.length;j++){
+        if(px== mdefPos[j].x && py== mdefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }else if(c==1){
+      for(var j=0;j<fdefPos.length;j++){
+        if(px== fdefPos[j].x && py== fdefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }
+    else if(c==2){
+      for(var j=0;j<gdefPos.length;j++){
+        if(px== gdefPos[j].x && py== gdefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }else if(c==3){
+      for(var j=0;j<adefPos.length;j++){
+        if(px== adefPos[j].x && py== adefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }else if(c==4){
+      for(var j=0;j<ndefPos.length;j++){
+        if(px== ndefPos[j].x && py== ndefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }else if(c==5){
+      for(var j=0;j<qdefPos.length;j++){
+        if(px== qdefPos[j].x && py== qdefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }else if(c==6){
+      for(var j=0;j<tdefPos.length;j++){
+        if(px== tdefPos[j].x && py== tdefPos[j].y){
+          fill(255,255);
+          text(genDefs[i], posW[i].x,posW[i].y);
+        }
+      }
+    }
+    //push();
+    //rotate(ang);
     //circle(pos[i].x,pos[i].y,10);
+    //pop();
   }
   pop();
 }
